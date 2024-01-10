@@ -5,4 +5,4 @@ db = client.db_jungle_firstPro                        # 'jungle'라는 이름의
 # MongoDB에서 데이터 모두 보기
 all_users = list(db.china.find({}))
 
-print(all_users)
+print(all_users) 
