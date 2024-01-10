@@ -5,8 +5,8 @@ from pymongo import MongoClient  # pymongo를 임포트 하기(패키지 인스�
 
 app = Flask(__name__)
 
-client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
-db = client.dbjungle  # 'dbjungle'라는 이름의 db를 만들거나 사용합니다.
+client = MongoClient('mongodb://test:test@54.180.112.156', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
+db = client.dbjungle_firstPro  # 'dbjungle'라는 이름의 db를 만들거나 사용합니다.
 
 
 @app.route('/')
@@ -38,7 +38,7 @@ def post_article():
     article = {'comment': comment_receive}
     
     # 3. mongoDB에 데이터를 넣기
-    db.articles.insert_one(article)
+    db.reply.insert_one(article)
 
     return jsonify({'result': 'success'})
 
@@ -48,7 +48,7 @@ def read_articles():
     # 1. mongoDB에서 _id 값을 제외한 모든 데이터 조회해오기 (Read)
     
     
-    result = list(db.articles.find({}, {'_id': 0}))
+    result = list(db.reply.find({}, {'_id': 0}))
     # 2. articles라는 키 값으로 article 정보 보내주기
     return jsonify({'result': 'success', 'articles': result})
 
