@@ -5,8 +5,9 @@ from pymongo import MongoClient  # pymongo를 임포트 하기(패키지 인스�
 
 app = Flask(__name__)
 
-client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
-db = client.dbjungle  # 'dbjungle'라는 이름의 db를 만들거나 사용합니다.
+#client = MongoClient('mongodb://test:test@54.180.112.156', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
+client = MongoClient('localhost',27017)
+db = client.db_jungle_firstPro                        # 'jungle'라는 이름의 db를 만듭니다.
 
 
 @app.route('/')
@@ -19,12 +20,11 @@ def main():
 
 # API 가게 리스트 반환하기
 @app.route('/list', methods=['GET'])
-def show_restaurant():
+def show_store():
     # client 에서 요청한 정렬 방식이 있는지를 확인합니다.기본으로 별점 순으로 정렬합니다.
     sortMode = request.args.get('sortMode','likes')
     
-    if sortMode == "likes":
-        stores = list(db.stores.find().sort('likes',-1))
+    stores = list(db.chiness.find())
     
     # 성공하면 success 메시지와 함께 store_list 목록을 클라이언트에 전달.
     return jsonify({'result': 'success', 'store_list': stores})

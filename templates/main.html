@@ -37,21 +37,48 @@
 
     </style>
     <script>
-
+        const Sort = {
+            BY_LIKES: "likes"
+        }
         let displaymode = false //댓글 창 
+        let sortMode = Sort.BY_LIKES
 
         $(document).ready(function () {
             showReply();
             // index.html 로드가 완료되면 자동으로 showStar() 함수를 호출합니다.
-            //showStore();
+            showStore();
+
+            displaySorter(sortMode)
         });
+
+        function changeSorter(newMode) {
+            if (sortMode == newMode) {
+                return
+            }
+
+            sortMode = newMode
+            displaySorter(sortMode)
+            showStore()
+        }
+
+        function displaySorter(sortMode) {
+            if(sortMode == 'likes'){
+                document.getElementById("sorter-likes").classList.add("active")         //활성화
+                document.getElementById("sorter-replys").classList.remove("active")    //비활성화
+            }
+            else if(sortMode == 'replys'){
+                document.getElementById("sorter-replys").classList.add("active")
+                document.getElementById("sorter-likes").classList.remove("active")
+            }
+            
+        }
 
         function showStore() {
             $('#store-box').empty()
 
             $.ajax({
                 type:"GET",
-                url:"/api/list",
+                url:"/list",
                 data:{'sortMode':sortMode},
                 success: function(response){
                     if (response['result'] != 'success') {
@@ -59,13 +86,48 @@
                         return
                     }
                     // 3. 서버가 돌려준 stars_list를 movies 라는 변수에 저장합니다.
-                    let stores = response['stores_list']
+                    let stores = response['store_list']
                     // 4. 영화 카드를 추가합니다. 이 때 휴지통 여부에 따라 카드 모양이 달라지므로 휴지통 여부(=false)도 같이 전달합니다.
-                    addMovieCards(movies, false)
+                    addMovieCards(stores)
                 }
             })
         }
 
+        function addMovieCards(stores){
+            for (let i = 0; i < stores.length; i++) {
+                let store = stores[i]
+
+                let title = store['title']
+                let addr = store['address']
+                let like = store['like']
+                let url = store['url']
+
+                let cardContentHtml =
+                `
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-128x128">
+                            <img src="https://bulma.io/images/placeholders/128x128.png">
+                        </p>
+                    </figure>
+                    <div class="media-content" id ="info">
+                        <div class="content">
+                            <p>
+                                <a href = ${url} class ="store-title">${title}</a><br>
+                                <span class="store-addr">${addr}</span>
+                                <span class="movie-likes">⭐${likes}</span><br/>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <button id= "btn-replay" onclick="displayMode()" class="button is-right">댓글</button>
+                    </div>
+                </article>
+                `
+
+                $('#store-box').append(cardContentHtml)
+            }
+        }
         function onDisplay(displaymode) {
 
             if(displaymode == false){
@@ -159,40 +221,20 @@
     <div class="star-list" id="star-box">
         <div class="card">
             <footer class="card-footer">
-                <a href="#" onclick="likeStar('김다미')" class="card-footer-item has-text-info">
+                <a href="#" id="sorter-likes" onclick="changeSorter('likes')" class="card-footer-item has-text-info">
                     별점 순으로 보기!
 
                 </a>
-                <a href="#" onclick="deleteStar('김다미')" class="card-footer-item has-text-danger">
+                <a href="#" id="sorter-replys" onclick="changeSorter('replys')" class="card-footer-item has-text-danger">
                     댓글 많은 순으로 보기!
 
                 </a>
             </footer>
         </div>
     </div>
-    <div class="container" id="store-box">
+    <div class="container">
         <div class="notification is-warning is-light">
-            <article class="media">
-                <figure class="media-left">
-                    <p class="image is-128x128">
-                        <img src="https://bulma.io/images/placeholders/128x128.png">
-                    </p>
-                </figure>
-                <div class="media-content" id ="info">
-                    <div class="content">
-                        <p>
-                            <strong>가게명</strong> <small>31m</small>
-                            <br>
-                            인천광역시 부평구 산곡2동
-                            <br>
-                            <strong>⭐4.8</strong>
-                        </p>
-                    </div>
-                </div>
-                <div class="level-right">
-                    <button id= "btn-replay" onclick="displayMode()" class="button is-right">댓글</button>
-                </div>
-            </article>
+            <div class ="container" id ="store-box">
             <div class='container' id="post-box" style ="display:none" > 
                 <div class ='container' id ="reply-box" > <!--style ="overflow-y: scroll; height:200px;" !-->
 

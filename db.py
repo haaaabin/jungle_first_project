@@ -1,24 +1,23 @@
 from pymongo import MongoClient           # pymongo를 임포트 하기(패키지 인스톨 먼저 해야겠죠?)
-client = MongoClient('localhost', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
-db = client.jungle                        # 'jungle'라는 이름의 db를 만듭니다.
+client = MongoClient('mongodb://test:test@54.180.112.156', 27017)  # mongoDB는 27017 포트로 돌아갑니다.
+db = client.db_jungle_firstPro                        # 'jungle'라는 이름의 db를 만듭니다.
 
-# MongoDB에 insert 하기
 
-# 'users'라는 collection에 {'name':'bobby','age':21}를 넣습니다.
-db.users.insert_one({'name':'bobby','age':21})
-db.users.insert_one({'name':'kay','age':27})
-db.users.insert_one({'name':'john','age':30})
+title = list(db.china.distinct(("이름")))
+like = list(db.china.distinct(("방문자 평점")))
+address = list(db.china.distinct(("도로명주소")))
+url = list(db.china.distinct(("상세페이지URL")))
 
-# MongoDB에서 데이터 모두 보기
-all_users = list(db.users.find({}))
+doc = {
+    'title':title,
+    'like':like,
+    'address':address,
+    'url':url
+}
 
-# 참고) MongoDB에서 특정 조건의 데이터 모두 보기
-same_ages = list(db.users.find({'age':21}))
+#db.chiness.insert_one(doc)
 
-print(all_users[0])         # 0번째 결과값을 보기
-print(all_users[0]['name']) # 0번째 결과값의 'name'을 보기
+chiness = list(db.chiness.find())
 
-for user in all_users:      # 반복문을 돌며 모든 결과값을 보기
-    print(user)
-    
-    
+print(chiness)
+
